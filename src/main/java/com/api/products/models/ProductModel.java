@@ -2,6 +2,7 @@ package com.api.products.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -10,7 +11,7 @@ import java.util.UUID;
 
 @Entity
 @Data
-public class ProductModel implements Serializable {
+public class ProductModel extends RepresentationModel<ProductModel> implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
