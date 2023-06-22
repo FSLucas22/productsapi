@@ -8,6 +8,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class ProductController {
     @Autowired
     ProductRepository repository;
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping(URL)
     public ResponseEntity<ProductModel> saveProduct(@RequestBody @Valid ProductRecordDto dto) {
         var productModel = new ProductModel();
@@ -29,6 +31,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(productModel));
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping(URL)
     public ResponseEntity<List<ProductModel>> getAllProducts() {
         var products = repository.findAll();
@@ -40,6 +43,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(products);
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping(URL + "/{id}")
     public ResponseEntity<Object> getProductById(@PathVariable(value = "id") UUID id ) {
         var product = repository.findById(id);
@@ -50,6 +54,7 @@ public class ProductController {
                         .withRel("Products List")));
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PutMapping(URL + "/{id}")
     public ResponseEntity<Object> updateProduct(@PathVariable(value = "id") UUID id,
                                                 @RequestBody @Valid ProductRecordDto dto) {
@@ -62,6 +67,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(repository.save(updatingProduct));
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping(URL + "/{id}")
     public ResponseEntity<String> deleteProduct(@PathVariable(value = "id") UUID id) {
         var product = repository.findById(id);
